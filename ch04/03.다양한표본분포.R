@@ -6,6 +6,7 @@ t1 = dt(x, df=1)
 t2 = dt(x, df=2)
 t8 = dt(x, df=8)
 t30 = dt(x, df=30)
+
 plot(x, y, type='l', lty = 1, axes = F, xlab = 'x', ylab = '', col='red')
 axis(1)
 lines(x, t1, lty=4, col='black')
@@ -15,6 +16,7 @@ lines(x, t30, lty=6, col='green')
 legend('topright',paste('df :', c(1,2,8,30)),
        lty=c(4,3,2,6),
        col=c('black','magenta','blue','green'),cex=0.7)
+
 
 
 # 카이제곱 분포
@@ -66,12 +68,22 @@ t3 = dt(x, df=32)
 t4 = dt(x, df=64)
 
 
+mean(rbinom(t1,2,mean(t1)))
+mean(rbinom(t2,8,mean(t2)))
+mean(rbinom(t3,32,mean(t3)))
+mean(rbinom(t4,64,mean(t4)))
 
 
-chi1 =dchisq(x, df=2)
-chi2 =dchisq(x, df=8)
-chi3 =dchisq(x, df=32)
-chi4 =dchisq(x, df=64)
+
+chi1 =dchisq(x, df=10)
+chi2 =dchisq(x, df=10)
+chi3 =dchisq(x, df=10)
+chi4 =dchisq(x, df=10)
+
+mean(rbinom(chi1,2,mean(chi1)))
+mean(rbinom(chi2,8,mean(chi2)))
+mean(rbinom(chi3,32,mean(chi3)))
+mean(rbinom(chi4,64,mean(chi4)))
 
 f1 = df(x,2,8)
 f2 = df(x,2,32)
@@ -80,11 +92,57 @@ f4 = df(x,8,32)
 f5 = df(x,8,64)
 f6 = df(x,32,64)
 
+mean(rbinom(f1,2,mean(f1)))
+mean(rbinom(f2,2,mean(f2)))
+mean(rbinom(f3,2,mean(f3)))
+mean(rbinom(f4,2,mean(f4)))
+mean(rbinom(f5,2,mean(f5)))
+mean(rbinom(f6,2,mean(f6)))
 
-x1 = c('t1','t2','t3','t4')
-y1 = c(mean(t1),mean(t2),mean(t3),mean(t4))
-fig = plot_ly(y=y1, x=x1, histfunc='sum', type = 'histogram')    
-fig = fig %>% layout(yaxis=list(type='linear'))    
-fig
+n= 1000
+df =5; df2=10
+t2.mean = rep(NA,n)
+t4.mean = rep(NA,n)
+t16.mean = rep(NA,n)
+t32.mean = rep(NA,n)
+for (i in 1:n) {
+    t2.mean[i] = mean(rt(2, df=df))    
+    t4.mean[i] = mean(rt(4, df=df))    
+    t16.mean[i] = mean(rt(16, df=df))    
+    t32.mean[i] = mean(rt(32, df=df))    
+}
+c(mean(t2.mean), sd(t2.mean))
+
+chi2.mean = rep(NA, n)
+chi4.mean = rep(NA, n)
+chi16.mean = rep(NA, n)
+chi32.mean = rep(NA, n)
+for (i in 1:n) {
+    chi2.mean = mean(rchisq(2, df=df))
+    chi4.mean = mean(rchisq(4, df=df))
+    chi16.mean = mean(rchisq(16, df=df))
+    chi32.mean = mean(rchisq(32, df=df))
     
+}
+f2.mean = rep(NA, n)
+f4.mean = rep(NA, n)
+f16.mean = rep(NA, n)
+f32.mean = rep(NA, n)
+for (i in 1:n) {
+    f2.mean = mean(rf(2, df1=df, df2=df2))
+    f4.mean = mean(rf(4, df1=df, df2=df2))
+    f16.mean = mean(rf(16, df1=df, df2=df2))
+    f32.mean = mean(rf(32, df1=df, df2=df2))
     
+}
+
+m = df2 / (df-2)
+s = sqrt(2 * df2^2 * (df + df2 -2)/(df * (df2-2)^2*(df2-4)))
+
+par(mfrow=c(2,2),oma = c(0,0,2,0))
+hist(f2.mean,prob=T, col='orange', border='red')
+x2=seq(min(f2.mean),max(f2.mean), length=1000)
+y2 = dnorm(x2, m, s/sqrt(2))
+lines(x2, y2,lty=2,lwd=2)
+
+
